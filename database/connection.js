@@ -10,9 +10,9 @@ var mysqlConnectionPool = mysql.createPool({
     multipleStatements: true  //开启多sql
 })
 
-var query = function(sql,params, callback) {
+var query = (sql,params, callback) => {
     async.waterfall([
-        function(cb){
+        (cb) => {
             mysqlConnectionPool.getConnection((err, connection)=>{
                 if (err) {
                     callback(err, null);
@@ -20,7 +20,7 @@ var query = function(sql,params, callback) {
                 cb(err, connection)
             })
         },
-        function(connection, cb){
+        (connection, cb) => {
             connection.beginTransaction((err) => {
                 if (err) {
                     callback(err, null)
@@ -28,7 +28,7 @@ var query = function(sql,params, callback) {
                 cb(err, connection)
             })
         },
-        function(connection, cb){
+        (connection, cb) => {
             connection.query(sql, params, (err, results) => {
                 if (err) {
                     connection.rollback(()=> {
@@ -43,7 +43,7 @@ var query = function(sql,params, callback) {
                 cb(err, null)
             })
         }
-    ], function(err, results){
+    ], (err, results)=>{
         console.log(err);
         console.log(results);
     });
